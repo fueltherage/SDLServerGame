@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{44493108-D3CA-4033-9151-C0438785CBDE}</ProjectGuid>
+    <RootNamespace>BaseProject</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>..\..\BaseProject\libraries\SDL2-2.0.1\include;..\..\BaseProject\libraries\SDL2_ttf-2.0.12\include;..\..\BaseProject\libraries\SDL2_net-2.0.0\include;..\..\BaseProject\libraries\SDL2_mixer-2.0.0\include;..\..\BaseProject\libraries\SDL2_image-2.0.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\BaseProject\libraries\SDL2-2.0.1\lib\x86;..\..\BaseProject\libraries\SDL2_ttf-2.0.12\lib\x86;..\..\BaseProject\libraries\SDL2_net-2.0.0\lib\x86;..\..\BaseProject\libraries\SDL2_mixer-2.0.0\lib\x86;..\..\BaseProject\libraries\SDL2_image-2.0.0\lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\BaseProject\Box2D\;..\..\BaseProject\libraries\SDL2-2.0.1\include;..\..\BaseProject\libraries\SDL2_ttf-2.0.12\include;..\..\BaseProject\libraries\SDL2_net-2.0.0\include;..\..\BaseProject\libraries\SDL2_mixer-2.0.0\include;..\..\BaseProject\libraries\SDL2_image-2.0.0\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;SDL2_net.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\BaseProject\Box2D\;..\..\BaseProject\libraries\SDL2-2.0.1\include;..\..\BaseProject\libraries\SDL2_ttf-2.0.12\include;..\..\BaseProject\libraries\SDL2_net-2.0.0\include;..\..\BaseProject\libraries\SDL2_mixer-2.0.0\include;..\..\BaseProject\libraries\SDL2_image-2.0.0\include</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="CollisionCircle.cpp" />
+    <ClCompile Include="CollisionObject.cpp" />
+    <ClCompile Include="CollisionPair.cpp" />
+    <ClCompile Include="CollisionPolygon.cpp" />
+    <ClCompile Include="CollisionRect.cpp" />
+    <ClCompile Include="GamepadInput.cpp" />
+    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="KeyboardInput.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="MapCell.cpp" />
+    <ClCompile Include="MapCellAnimated.cpp" />
+    <ClCompile Include="MouseInput.cpp" />
+    <ClCompile Include="PhysicsEngine.cpp" />
+    <ClCompile Include="PhysicsObject2D.cpp" />
+    <ClCompile Include="SpriteBatch.cpp" />
+    <ClCompile Include="SpriteFont.cpp" />
+    <ClCompile Include="TileEngine.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CollisionCircle.h" />
+    <ClInclude Include="CollisionObject.h" />
+    <ClInclude Include="CollisionPair.h" />
+    <ClInclude Include="CollisionPolygon.h" />
+    <ClInclude Include="CollisionRect.h" />
+    <ClInclude Include="GamepadInput.h" />
+    <ClInclude Include="HelperFunctions.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="KeyboardInput.h" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="MapCell.h" />
+    <ClInclude Include="MapCellAnimated.h" />
+    <ClInclude Include="MouseInput.h" />
+    <ClInclude Include="PackedSprite.h" />
+    <ClInclude Include="PhysicsEngine.h" />
+    <ClInclude Include="PhysicsObject2D.h" />
+    <ClInclude Include="SpriteBatch.h" />
+    <ClInclude Include="SpriteFont.h" />
+    <ClInclude Include="TileEngine.h" />
+    <ClInclude Include="Vector2D.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LevelMap2.alevel" />
+    <None Include="SDL2_image.dll" />
+    <None Include="LevelMap.alevel" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Background.jpg" />
+    <Image Include="Assets\Chipped Bricks.png" />
+    <Image Include="Assets\Explosion1.png" />
+    <Image Include="Assets\Floor.jpg" />
+    <Image Include="Assets\Floor2.jpg" />
+    <Image Include="Assets\grassTile01.jpg" />
+    <Image Include="Assets\Grid.png" />
+    <Image Include="Assets\marbleFloor.jpg" />
+    <Image Include="Assets\metalFloor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Blazed.ttf" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
