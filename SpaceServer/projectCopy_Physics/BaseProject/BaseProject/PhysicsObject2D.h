@@ -95,9 +95,10 @@ public:
 	float rotation;
 	Vector2D position;
 	
-private:
+protected:
 	int id;
 	
+private:
 	
 	Vector2D acceleration;
 	float rotVelocity;
