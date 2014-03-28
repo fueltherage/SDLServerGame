@@ -25,8 +25,10 @@ int floortile;
 int background;
 
 //Objects on screen
-std::vector<PhysicsObject2D*> things;
-std::vector<PhysicsObject2D*> movable;
+std::vector<PhysicsObject2D*> Players;
+std::vector<PhysicsObject2D*> Bounds;
+
+
 SDL_Rect backgroundSource;
 SDL_Rect backgroundDest;
 
@@ -48,23 +50,14 @@ MapCellAnimated* cell;
 SpriteBatch* spriteBatch;//The spritebatch to draw with
 InputManager* input;//The input instance to poll
 //PackedSprite test;
+
 //DO NOT MODIFY MAIN
 int main(int argv, char** argc)
 {
 	Initialize();
-
 	LoadContent();
-	font = SpriteFont::GetInstance();
-	BlazedFont = font->LoadFont("Blazed.ttf", 16);
-	floortile = spriteBatch->LoadTexture(std::string("Assets//Tilesheets//") + tileEngine->getTileSheet() + std::string("//FloorTile.png"));
-	background = spriteBatch->LoadTexture(std::string("Assets//Tilesheets//") + tileEngine->getTileSheet() + std::string("//Background.jpg"));
-	explosion = spriteBatch->LoadTexture("Assets//Explosion1.png");
 	
-	PhysicsObject2D::setMapBounds(new Vector2D(ScreenWidth,ScreenHeight));
-	cell = new MapCellAnimated(explosion,1,1,50,2048,1536,Vector2D(8,6),0.05f,45,true,spriteBatch);
-	gameMap = new Map(20,20,50,floortile,spriteBatch);
-	//Cluster of 100 objects
-
+	
 	
 	for(int y =0; y<tileEngine->getGridHeight();y++)
 	{
@@ -74,37 +67,21 @@ int main(int argv, char** argc)
 			{
 				printf("1");
 
-				things.push_back(new PhysicsObject2D(things.size(),Vector2D(25+50*x,25+50*y),CollisionRect(Vector2D(0.0,0.0),50,50)));
+				Bounds.push_back(new PhysicsObject2D(Bounds.size(),Vector2D(25+50*x,25+50*y),CollisionRect(Vector2D(0.0,0.0),50,50)));
 				//Toggle whether objects are static or not
-				things[things.size() - 1]->movable = false;
-				things[things.size() - 1]->SetMass(1.0f);
+				Bounds[Bounds.size() - 1]->movable = false;
+				Bounds[Bounds.size() - 1]->SetMass(1.0f);
 			}
 			printf("0");
 		}
 		printf("\n");
 	}
 
-
-	for(int j =0; j<things.size();j++)
+	for(int j =0; j<Bounds.size();j++)
 	{
-		gameMap->RegisterStaticObject(things[j]);
+		gameMap->RegisterStaticObject(Bounds[j]);
 	}
-	//thing2 = new PhysicsObject2D(things.size(), Vector2D(300,300), CollisionRect(Vector2D(0,0),10,10));
-	//thing2->SetDrag(0.25f);
-	//thing2->SetMass(1.0f);
-	//things.push_back(thing2);
 
-	for(int i=0; i<20;i++)
-	{
-		thing3 = new PhysicsObject2D(things.size(), Vector2D(30*i+100,100), CollisionRect(Vector2D(0,0),20,20));
-		thing3->SetDrag(0.75f);
-		thing3->SetMass(2.0f);
-		things.push_back(thing3);
-		movable.push_back(thing3);
-		gameMap->RegisterObject(thing3);
-	}
-	//gameMap->RegisterObject(thing2);
-	//gameMap->RegisterObject(thing3);
 
 	backgroundSource = spriteBatch->QueryTexture(background);
 	backgroundDest = spriteBatch->QueryTexture(background);
@@ -113,6 +90,7 @@ int main(int argv, char** argc)
 	float timeThisFrame = 0;
 	float timeLastFrame = 0;
 	float deltaTime = 0;
+
 	//DO NOT MODIFY THIS METHOD
 	do
 	{
@@ -140,6 +118,11 @@ void Initialize()
 	input = InputManager::GetInstance();
 	tileEngine = TileEngine::GetInstance("LevelMap2", false);
 	engine = PhysicsEngine::GetInstance();
+
+	PhysicsObject2D::setMapBounds(new Vector2D(ScreenWidth,ScreenHeight));
+	cell = new MapCellAnimated(explosion,1,1,50,2048,1536,Vector2D(8,6),0.05f,45,true,spriteBatch);
+	gameMap = new Map(20,20,50,floortile,spriteBatch);
+
 	//Initialize the window
 	ScreenWidth = tileEngine->getGridWidth()*tileEngine->getTileWidth();
 	ScreenHeight = tileEngine->getGridHeight()*tileEngine->getTileHeight();
@@ -152,6 +135,12 @@ void Initialize()
 void LoadContent()
 {
 	//Load contents here
+
+	font = SpriteFont::GetInstance();
+	BlazedFont = font->LoadFont("Blazed.ttf", 16);
+	floortile = spriteBatch->LoadTexture(std::string("Assets//Tilesheets//") + tileEngine->getTileSheet() + std::string("//FloorTile.png"));
+	background = spriteBatch->LoadTexture(std::string("Assets//Tilesheets//") + tileEngine->getTileSheet() + std::string("//Background.jpg"));
+	explosion = spriteBatch->LoadTexture("Assets//Explosion1.png");
 
 }
 
@@ -169,53 +158,11 @@ void Update(float gameTime)
 		quit = true;
 	}
 	
-	for each (PhysicsObject2D* object in things)
+	for each (PhysicsObject2D* object in Bounds)
 	{
 		object->Update(gameTime);
 	}
-
-
-
-	//thing2 will follow the mouse around
-	SDL_Point MousePosition = input->GetMousePosition();
-	//Converting to Vector2D format for Wes's pleasure
-	Vector2D MouseDirection = Vector2D(MousePosition.x,MousePosition.y);
-	//thing2->SpringForce(MouseDirection,0,1000000.0f);
-
-	if(input->GetKeyDown(SDL_SCANCODE_W))
-	{
-		for each (PhysicsObject2D* object in movable)
-		{
-			object->AddImpulse(Vector2D(0,-1.0),10);
-		}
-		//thing3->AddForce(Vector2D(0,-1.0),100);
-	}
-	if(input->GetKeyDown(SDL_SCANCODE_S))
-	{
-		for each (PhysicsObject2D* object in movable)
-		{
-			object->AddImpulse(Vector2D(0,1.0),10);
-		}
-		//thing3->AddForce(Vector2D(0,1.0),100);
-	}
-	if(input->GetKeyDown(SDL_SCANCODE_A))
-	{
-		for each (PhysicsObject2D* object in movable)
-		{
-			object->AddImpulse(Vector2D(-1,0),10);
-		}
-		//thing3->AddForce(Vector2D(-1.0,0),100);
-	}
-	if(input->GetKeyDown(SDL_SCANCODE_D))
-	{
-		for each (PhysicsObject2D* object in movable)
-		{
-			object->AddImpulse(Vector2D(1,0),10);
-		}
-		//thing3->AddForce(Vector2D(1.0,0),100);
-	}
-
-
+	
 	//Game Updating goes under here
 }
 
@@ -231,7 +178,7 @@ void Draw()
 	gameMap->Draw(spriteBatch);
 	
 
-	for each (PhysicsObject2D* object in things)
+	for each (PhysicsObject2D* object in Bounds)
 	{
 		object->Draw(spriteBatch);
 	}
@@ -247,4 +194,52 @@ void DestroyGame()
 
 	if(input)
 		input->DestroyInputManager(input);
+}
+
+int GetNewId()
+{
+}
+
+void UpdateInput(int PlayerID,SDL_Scancode keypress)
+{
+	if(keypress == SDL_SCANCODE_W)
+	{
+		for each (PhysicsObject2D* object in Players)
+		{
+			if(object->id == PlayerID)
+			{
+				object->AddImpulse(Vector2D(0,-1.0),10);
+			}
+		}		
+	}
+	if(keypress == SDL_SCANCODE_S)
+	{
+		for each (PhysicsObject2D* object in Players)
+		{
+			if(object->id == PlayerID)
+			{
+				object->AddImpulse(Vector2D(0,1.0),10);
+			}
+		}	
+	}
+	if(keypress == SDL_SCANCODE_A)
+	{
+		for each (PhysicsObject2D* object in Players)
+		{
+			if(object->id == PlayerID)
+			{
+				object->AddImpulse(Vector2D(-1.0,0),10);
+			}
+		}	
+	}
+	if(keypress == SDL_SCANCODE_D)
+	{
+		for each (PhysicsObject2D* object in Players)
+		{
+			if(object->id == PlayerID)
+			{
+				object->AddImpulse(Vector2D(1.0,0),10);
+			}
+		}		
+	}
 }
