@@ -15,6 +15,8 @@ public:
 	// Rotation Matrix CounterClockWise
 	// [x,y] * [Cos0 - Sin0] 
 	//		   [Sin0 + Cos0]
+
+	
 	
 	//World position of corner c1
 	Vector2D c1World() { return Vector2D((cos(rotation)*c1.x*scale.x - sin(rotation)*c1.y*scale.y )+center.x
@@ -75,6 +77,7 @@ public:
 	Vector2D center;	
 	float GetWidth(){return width;}
 	float GetHeight(){return height;}
+	bool Colliding;
 	virtual void Draw(SpriteBatch* spriteBatch,int id);
 	
 protected:
@@ -86,6 +89,9 @@ protected:
 	SDL_Point point2;
 	SDL_Point point3;
 	SDL_Point point4;
+	SDL_Color Red;
+	SDL_Color Yellow;
+	
 		
 	float width;
 	float height;

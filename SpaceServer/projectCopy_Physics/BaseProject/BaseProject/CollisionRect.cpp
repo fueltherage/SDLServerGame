@@ -18,6 +18,10 @@ CollisionRect::CollisionRect(Vector2D position, float _width, float _height)
 	c2 = Vector2D(width/2.0f,height/2.0f);
 	c3 = Vector2D(width/2.0f,-height/2.0f);
 	c4 = Vector2D(-width/2.0f,-height/2.0f);
+	Red = CreateColor(1.0f, 0.0f, 0.0f, 1.0f);
+	Yellow = CreateColor(1.0f, 1.0f, 0.0f, 1.0f);
+
+	
 	
 }
 void CollisionRect::Draw(SpriteBatch* spriteBatch,int id)
@@ -27,7 +31,12 @@ void CollisionRect::Draw(SpriteBatch* spriteBatch,int id)
 	points[1]=c2WorldSDLP();
 	points[2]=c3WorldSDLP();
 	points[3]=c4WorldSDLP();
-	spriteBatch->DrawLines(points,4,CreateColor(255,255,0,255),true);
+
+	if(Colliding)
+		spriteBatch->DrawLines(points,4,Red,true);
+	else
+		spriteBatch->DrawLines(points,4,Yellow,true);
+	Colliding = false;
 	//spriteBatch->DrawString(0,convertInt(id),StringDrawMode::Blended,CreateColor(255,255,255,255),CreateColor(0,0,0,0),10,_center,0.0f,NULL,1.0,SDL_FLIP_NONE,1.0f);
 }
 

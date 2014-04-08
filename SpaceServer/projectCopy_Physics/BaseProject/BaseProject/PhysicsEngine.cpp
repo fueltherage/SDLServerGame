@@ -165,13 +165,14 @@ void PhysicsEngine::CollisionResponse(PhysicsObject2D* _object1, PhysicsObject2D
 	else if(_object2->movable && !_object1->movable) {
 		//printf("\n\n velocity before: x:%.2f y:%.2f", _object2->velocity.x,_object2->velocity.y);
 		
-		Vector2D normal = _object1->position - _object2->position;		
+		Vector2D normal;
 		
-		if(abs(normal.x) > abs(normal.y))
+		/*if(abs(collisionInfo.overlap.y) > abs(collisionInfo.overlap.x))
 		{
-			normal.y=0;
-		}else normal.x =0;
-
+			normal = Vector2D(0,1);
+			
+		}else normal = Vector2D(1,0);*/
+		normal = collisionInfo.overlap/collisionInfo.overlap.length();
 		normal = normal/normal.length();
 		//printf("\nnormal x:%.2f y:%.2f", normal.x, normal.y);
 		Vector2D boundary = Vector2D(-normal.y, normal.x);
@@ -182,7 +183,7 @@ void PhysicsEngine::CollisionResponse(PhysicsObject2D* _object1, PhysicsObject2D
 		float boundVel = Dot(&boundary, &_object2->velocity);
 		float normalVel = -1*Dot(&normal, &_object2->velocity);
 
-		_object2->resolvedVelocity += normal * normalVel + boundary * boundVel;
+		_object2->resolvedVelocity += (normal * normalVel + boundary * boundVel)*_object1->GetCoefficient();
 		_object2->resolveNumber++;
 		//_object2->velocity = normal * normalVel + boundary * boundVel;
 		//printf("\nvelocity after: x:%.2f y:%.2f", _object1->velocity.x,_object1->velocity.y);
@@ -192,14 +193,12 @@ void PhysicsEngine::CollisionResponse(PhysicsObject2D* _object1, PhysicsObject2D
 	}
 	else if(_object1->movable && !_object2->movable) {	
 
-		//printf("\n\nvelocity before: x:%.2f y:%.2f", _object1->velocity.x,_object1->velocity.y);
 		
-		Vector2D normal = _object2->position - _object1->position;		
-		if(abs(normal.x) > abs(normal.y))
-		{
-			normal.y=0;
-		}else normal.x =0;
+		Vector2D normal;
+		
+		
 
+		normal = collisionInfo.overlap/collisionInfo.overlap.length();
 		normal = normal/normal.length();
 		//printf("\nnormal x:%.2f y:%.2f", normal.x, normal.y);
 		Vector2D boundary = Vector2D(-normal.y, normal.x);
@@ -210,11 +209,15 @@ void PhysicsEngine::CollisionResponse(PhysicsObject2D* _object1, PhysicsObject2D
 		float boundVel = Dot(&boundary, &_object1->velocity);
 		float normalVel = -1*Dot(&normal, &_object1->velocity);
 
-		_object1->resolvedVelocity += normal * normalVel + boundary * boundVel;
+		_object1->resolvedVelocity += (normal * normalVel + boundary * boundVel)*_object1->GetCoefficient();
 		_object1->resolveNumber++;
 		//_object1->velocity = normal * normalVel + boundary * boundVel;
 		//printf("\nvelocity after: x:%.2f y:%.2f", _object1->velocity.x,_object1->velocity.y);
 		_object1->position -= Dot(&normal,&collisionInfo.overlap)*collisionInfo.overlap/collisionInfo.overlap.length();
 	}
+
+	_object1->colliding = true;
+	_object2->colliding = true;
+
 
 }

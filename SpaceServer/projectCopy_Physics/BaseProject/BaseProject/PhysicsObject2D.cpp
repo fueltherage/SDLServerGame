@@ -67,6 +67,9 @@ void PhysicsObject2D::Update(float timeStep)
 
 	collider->rotation = rotation;
 	collider->center = position;
+	collider->Colliding = colliding;
+	colliding = false;
+
 }
 void PhysicsObject2D::AddTorque(float _radius, float _torque)
 {

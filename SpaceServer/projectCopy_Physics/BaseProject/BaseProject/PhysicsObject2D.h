@@ -83,6 +83,7 @@ public:
 
 	//Get the coefficient of restitution
 	float GetCoefficient(){return coeff;}
+	void SetCoefficient(float _coeff){coeff = _coeff;};
 
 	Vector2D* GetVelocity(){
 		Vector2D temp = Vector2D(velocity);

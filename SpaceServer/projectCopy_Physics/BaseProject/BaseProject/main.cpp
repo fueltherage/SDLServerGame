@@ -34,7 +34,7 @@ int currentID =0;
 std::vector<PhysicsObject2D*> Players;
 std::vector<PhysicsObject2D*> Bounds;
 std::vector<PhysicsObject2D*> Bullets;
-
+std::vector<PhysicsObject2D*> things;
 
 TileMapCollisionScanner* MapScanner;
 
@@ -45,9 +45,10 @@ MouseInput* mouseInput;
 
 PhysicsEngine* engine;
 
-PhysicsObject2D* thing;
+
+
 PhysicsObject2D* thing2;
-PhysicsObject2D* thing3;
+
 
 
 TileEngine* tileEngine;
@@ -109,9 +110,18 @@ int main(int argv, char** argc)
 		gameMap->RegisterStaticObject(Bounds[j]);
 	}*/
 	
-	thing2 = new PhysicsObject2D(GetNewId(),Vector2D(500,500), new CollisionRect(Vector2D(0.0,0.0),25,25));
-	thing2->movable = true;
-	gameMap->RegisterObject(thing2);
+	for(int i=0; i<5; i++)
+	{
+		things.push_back(new PhysicsObject2D(GetNewId(),Vector2D(100*i,500), new CollisionRect(Vector2D(0.0,0.0),25,25)));
+		things[things.size()-1]->movable = true;
+		things[things.size()-1]->SetDrag(0.5);
+		things[things.size()-1]->SetCoefficient(0.5);
+		gameMap->RegisterObject(things[things.size()-1]);
+
+	}
+
+
+	
 
 
 
@@ -192,30 +202,36 @@ void Update(float gameTime)
 	engine->Update(gameTime);	
 	cell->Update(gameTime);
 	gameMap->Update(gameTime);
-	thing2->Update(gameTime);
 
-	//thing2->PrintStuff();
+	for each(PhysicsObject2D* thing in things)
+	{
+		thing->Update(gameTime);
+	}
 
 
 	for each (PhysicsObject2D* object in Bounds)
 	{
 		object->Update(gameTime);
 	}
-	if(input->GetKeyDown(SDL_SCANCODE_W))
-	{					
-		thing2->AddImpulse(Vector2D(0,-1.0),10);							
-	}
-	if(input->GetKeyDown(SDL_SCANCODE_S))
-	{
-		thing2->AddImpulse(Vector2D(0,1.0),10);
-	}
-	if(input->GetKeyDown(SDL_SCANCODE_D))
-	{
-		thing2->AddImpulse(Vector2D(1.0,0),10);
-	}
-	if(input->GetKeyDown(SDL_SCANCODE_A))
-	{
-		thing2->AddImpulse(Vector2D(-1.0,0),10);
+
+	for each(PhysicsObject2D* thing in things)
+		{
+		if(input->GetKeyDown(SDL_SCANCODE_W))
+		{					
+			thing->AddImpulse(Vector2D(0,-1.0),10);							
+		}
+		if(input->GetKeyDown(SDL_SCANCODE_S))
+		{
+			thing->AddImpulse(Vector2D(0,1.0),10);
+		}
+		if(input->GetKeyDown(SDL_SCANCODE_D))
+		{
+			thing->AddImpulse(Vector2D(1.0,0),10);
+		}
+		if(input->GetKeyDown(SDL_SCANCODE_A))
+		{
+			thing->AddImpulse(Vector2D(-1.0,0),10);
+		}
 	}
 
 	
@@ -231,9 +247,12 @@ void Draw()
 	spriteBatch->Begin(SpriteBatchSortMode::Immediate,SDL_BLENDMODE_BLEND);
 	spriteBatch->DrawTexture(background,CreateColor(0.5f,0.5f,0.5f,1.0f),&backgroundSource,&backgroundDest,0.0f,NULL,SDL_RendererFlip::SDL_FLIP_NONE,1.0f);
 	gameMap->Draw(spriteBatch);
-	thing2->Draw(spriteBatch);
 
-	
+
+	for each(PhysicsObject2D* thing in things)
+	{
+		thing->Draw(spriteBatch);
+	}
 	
 
 	for each (PhysicsObject2D* object in Bounds)

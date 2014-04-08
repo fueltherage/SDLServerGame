@@ -186,15 +186,15 @@ void Map::RegisterRectangleOnGrid(PhysicsObject2D* _object, bool staticObject)
 	else
 	{
 		//Register the boundary rect
-		Vector2D _objectPos = _object->collider->center;
-		int p = CalculateGridPos(&_objectPos); //top left	
-		Vector2D _objectC2 = _object->collider->c2World();
-		int c2 = CalculateGridPos(&_objectC2);//bot right
+		Vector2D _objectPos = _object->collider->c1World();
+		int c1 = CalculateGridPos(&_objectPos); //top left	
+		Vector2D _objectC2 = _object->collider->c3World();
+		int c3 = CalculateGridPos(&_objectC2);//bot right
 
-		int r1 = p - height -1;
+		int r1 = c1 - height -1;
 		r1 = clamp(r1,0,height*width);
 
-		int r2 = c2 + height +1;
+		int r2 = c3 + height +1;
 		r2 = clamp(r2,0,height*width);
 
 		int xstart;
@@ -202,9 +202,9 @@ void Map::RegisterRectangleOnGrid(PhysicsObject2D* _object, bool staticObject)
 		int xmax;
 		int ymax;
 
-		for(int x = CalculateGridPosX(r1); x < CalculateGridPosX(r2); x++)
+		for(int x = CalculateGridPosX(r1); x <= CalculateGridPosX(r2); x++)
 		{
-			for(int y = CalculateGridPosY(r1); y < CalculateGridPosY(r2); y++)
+			for(int y = CalculateGridPosY(r1); y <= CalculateGridPosY(r2); y++)
 			{
 				grid[x*height+y].AddStaticObject(_object);
 			}
