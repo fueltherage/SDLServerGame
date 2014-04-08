@@ -9,7 +9,7 @@ class CollisionRect
 {
 public:
 	CollisionRect(void);
-	~CollisionRect(void);	
+	virtual ~CollisionRect(void);	
 	CollisionRect(Vector2D _center, float _width, float _height);
 	//the world position of each corner
 	// Rotation Matrix CounterClockWise
@@ -28,7 +28,13 @@ public:
 	//World position of corner c4
 	Vector2D c4World() { return Vector2D((cos(rotation)*c4.x*scale.x - sin(rotation)*c4.y*scale.y)+center.x 
 									    ,(sin(rotation)*c4.x*scale.x + cos(rotation)*c4.y*scale.y)+center.y);}
-	
+	SDL_Point position()
+	{
+		SDL_Point pos;
+		pos.x = (int)center.x;
+		pos.y = (int)center.y;
+		return pos;
+	}
 	SDL_Point c1WorldSDLP() 
 	{ 		
 		point1.x = (int)((cos(rotation)*c1.x*scale.x - sin(rotation)*c1.y*scale.y )+center.x);
@@ -63,14 +69,15 @@ public:
 
 	//Amount of scale from base shape	
 	Vector2D scale;
+	char name;
 	//Rotation in Radians	
 	float rotation;
 	Vector2D center;	
 	float GetWidth(){return width;}
 	float GetHeight(){return height;}
-	void Draw(SpriteBatch* spriteBatch,int id);
+	virtual void Draw(SpriteBatch* spriteBatch,int id);
 	
-private:
+protected:
 	void Rotate(float _rotation);
 	
 	//Local Position

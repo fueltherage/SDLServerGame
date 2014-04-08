@@ -2,13 +2,16 @@
 #include "SpriteBatch.h"
 #include "InputManager.h"
 #include "Map.h"
-#include "TileEngine.h"
+#include "TileMapCollisionScanner.h"
+//#include "TileEngine.h"
+#include "Player.h"
 #include <iostream>
 
 void Initialize();
 void LoadContent();
 void Update(float gameTime);
 void Draw();
+int GetNewId();
 
 //Destroys the components of the game when the application is ending
 void DestroyGame();
@@ -24,19 +27,26 @@ int brick;
 int floortile;
 int background;
 
+
+int currentID =0;
+
 //Objects on screen
 std::vector<PhysicsObject2D*> Players;
 std::vector<PhysicsObject2D*> Bounds;
+std::vector<PhysicsObject2D*> Bullets;
 
+
+TileMapCollisionScanner* MapScanner;
 
 SDL_Rect backgroundSource;
 SDL_Rect backgroundDest;
+MouseInput* mouseInput;
 
 
 PhysicsEngine* engine;
 
 PhysicsObject2D* thing;
-//PhysicsObject2D* thing2;
+PhysicsObject2D* thing2;
 PhysicsObject2D* thing3;
 
 
@@ -56,31 +66,53 @@ int main(int argv, char** argc)
 {
 	Initialize();
 	LoadContent();
-	
-	
-	
-	for(int y =0; y<tileEngine->getGridHeight();y++)
+	Player* Player1; 
+	Player* Player2;
+
+	BlazedFont = font->LoadFont("Blazed.ttf", 16);
+	floortile = spriteBatch->LoadTexture(std::string("Assets//Tilesheets//") + tileEngine->getTileSheet() + std::string("//FloorTile.png"));
+	background = spriteBatch->LoadTexture(std::string("Assets//Tilesheets//") + tileEngine->getTileSheet() + std::string("//Background.jpg"));
+	explosion = spriteBatch->LoadTexture("Assets//Explosion1.png");
+	cell = new MapCellAnimated(explosion,1,1,50,2048,1536,Vector2D(8,6),0.05f,45,true,spriteBatch);
+	gameMap = new Map(20,20,50,floortile,spriteBatch);
+
+	MapScanner = new TileMapCollisionScanner(tileEngine);
+
+
+	for each(CollisionRect* rect in MapScanner->rects)
 	{
-		for(int x =0; x<tileEngine->getGridWidth();x++)
-		{
-			if(tileEngine->levelVec[x+(y*tileEngine->getGridWidth())] ==1)
-			{
-				printf("1");
-
-				Bounds.push_back(new PhysicsObject2D(Bounds.size(),Vector2D(25+50*x,25+50*y),CollisionRect(Vector2D(0.0,0.0),50,50)));
-				//Toggle whether objects are static or not
-				Bounds[Bounds.size() - 1]->movable = false;
-				Bounds[Bounds.size() - 1]->SetMass(1.0f);
-			}
-			printf("0");
-		}
-		printf("\n");
+		Bounds.push_back(new PhysicsObject2D(GetNewId(),rect->center, rect));
+		Bounds[Bounds.size()-1]->movable = false;
+		gameMap->RegisterStaticObject(Bounds[Bounds.size()-1]);
 	}
+	
+	
+	//for(int y =0; y<tileEngine->getGridHeight();y++)
+	//{
+	//	for(int x =0; x<tileEngine->getGridWidth();x++)
+	//	{
+	//		if(tileEngine->levelVec[x+(y*tileEngine->getGridWidth())] ==1)
+	//		{
+	//			printf("1");
 
-	for(int j =0; j<Bounds.size();j++)
+	//			Bounds.push_back(new PhysicsObject2D(GetNewId(),Vector2D(25+50*x,25+50*y),new CollisionRect(Vector2D(0.0,0.0),50,50)));
+	//			//Toggle whether objects are static or not
+	//			Bounds[Bounds.size() - 1]->movable = false;
+	//			Bounds[Bounds.size() - 1]->SetMass(1.0f);
+	//		}
+	//		printf("0");
+	//	}
+	//	printf("\n");
+	//}
+	/*for(int j =0; j<Bounds.size();j++)
 	{
 		gameMap->RegisterStaticObject(Bounds[j]);
-	}
+	}*/
+	
+	thing2 = new PhysicsObject2D(GetNewId(),Vector2D(500,500), new CollisionRect(Vector2D(0.0,0.0),25,25));
+	thing2->movable = true;
+	gameMap->RegisterObject(thing2);
+
 
 
 	backgroundSource = spriteBatch->QueryTexture(background);
@@ -118,14 +150,16 @@ void Initialize()
 	input = InputManager::GetInstance();
 	tileEngine = TileEngine::GetInstance("LevelMap2", false);
 	engine = PhysicsEngine::GetInstance();
+	mouseInput = MouseInput::GetInstance();
 
-	PhysicsObject2D::setMapBounds(new Vector2D(ScreenWidth,ScreenHeight));
-	cell = new MapCellAnimated(explosion,1,1,50,2048,1536,Vector2D(8,6),0.05f,45,true,spriteBatch);
-	gameMap = new Map(20,20,50,floortile,spriteBatch);
+
 
 	//Initialize the window
 	ScreenWidth = tileEngine->getGridWidth()*tileEngine->getTileWidth();
 	ScreenHeight = tileEngine->getGridHeight()*tileEngine->getTileHeight();
+	PhysicsObject2D::setMapBounds(new Vector2D(ScreenWidth,ScreenHeight));
+
+
 	spriteBatch->Initialize("Test",ScreenWidth ,ScreenHeight);
 	
 	//Any initialization here
@@ -137,20 +171,13 @@ void LoadContent()
 	//Load contents here
 
 	font = SpriteFont::GetInstance();
-	BlazedFont = font->LoadFont("Blazed.ttf", 16);
-	floortile = spriteBatch->LoadTexture(std::string("Assets//Tilesheets//") + tileEngine->getTileSheet() + std::string("//FloorTile.png"));
-	background = spriteBatch->LoadTexture(std::string("Assets//Tilesheets//") + tileEngine->getTileSheet() + std::string("//Background.jpg"));
-	explosion = spriteBatch->LoadTexture("Assets//Explosion1.png");
+	
 
 }
 
 //Updates the game
 void Update(float gameTime)
 {
-	engine->Update(gameTime);
-	input->Update();
-	cell->Update(gameTime);
-	gameMap->Update(gameTime);
 	
 	//if escape is pressed, quit the game
 	if(input->GetKeyPress(SDL_SCANCODE_ESCAPE))
@@ -158,12 +185,40 @@ void Update(float gameTime)
 		quit = true;
 	}
 	
+
+	
+	//Game Updating goes under here
+	input->Update();
+	engine->Update(gameTime);	
+	cell->Update(gameTime);
+	gameMap->Update(gameTime);
+	thing2->Update(gameTime);
+
+	//thing2->PrintStuff();
+
+
 	for each (PhysicsObject2D* object in Bounds)
 	{
 		object->Update(gameTime);
 	}
+	if(input->GetKeyDown(SDL_SCANCODE_W))
+	{					
+		thing2->AddImpulse(Vector2D(0,-1.0),10);							
+	}
+	if(input->GetKeyDown(SDL_SCANCODE_S))
+	{
+		thing2->AddImpulse(Vector2D(0,1.0),10);
+	}
+	if(input->GetKeyDown(SDL_SCANCODE_D))
+	{
+		thing2->AddImpulse(Vector2D(1.0,0),10);
+	}
+	if(input->GetKeyDown(SDL_SCANCODE_A))
+	{
+		thing2->AddImpulse(Vector2D(-1.0,0),10);
+	}
+
 	
-	//Game Updating goes under here
 }
 
 //Draws the game
@@ -176,6 +231,9 @@ void Draw()
 	spriteBatch->Begin(SpriteBatchSortMode::Immediate,SDL_BLENDMODE_BLEND);
 	spriteBatch->DrawTexture(background,CreateColor(0.5f,0.5f,0.5f,1.0f),&backgroundSource,&backgroundDest,0.0f,NULL,SDL_RendererFlip::SDL_FLIP_NONE,1.0f);
 	gameMap->Draw(spriteBatch);
+	thing2->Draw(spriteBatch);
+
+	
 	
 
 	for each (PhysicsObject2D* object in Bounds)
@@ -198,48 +256,35 @@ void DestroyGame()
 
 int GetNewId()
 {
+	currentID++;
+	return currentID;
 }
 
-void UpdateInput(int PlayerID,SDL_Scancode keypress)
-{
-	if(keypress == SDL_SCANCODE_W)
+void UpdateInput(int PlayerID,std::vector<SDL_Scancode> keyspressed)
+{		
+	for each (PhysicsObject2D* object in Players)
 	{
-		for each (PhysicsObject2D* object in Players)
+		if(object->GetID() == PlayerID)
 		{
-			if(object->id == PlayerID)
+			for each(SDL_Scancode keys in keyspressed)
 			{
-				object->AddImpulse(Vector2D(0,-1.0),10);
+				if(keys == SDL_SCANCODE_W)
+				{					
+					object->AddImpulse(Vector2D(0,-1.0),10);							
+				}
+				if(keys == SDL_SCANCODE_S)
+				{
+					object->AddImpulse(Vector2D(0,1.0),10);
+				}
+				if(keys == SDL_SCANCODE_D)
+				{
+					object->AddImpulse(Vector2D(1.0,0),10);
+				}
+				if(keys == SDL_SCANCODE_A)
+				{
+					object->AddImpulse(Vector2D(-1.0,0),10);
+				}
 			}
-		}		
-	}
-	if(keypress == SDL_SCANCODE_S)
-	{
-		for each (PhysicsObject2D* object in Players)
-		{
-			if(object->id == PlayerID)
-			{
-				object->AddImpulse(Vector2D(0,1.0),10);
-			}
-		}	
-	}
-	if(keypress == SDL_SCANCODE_A)
-	{
-		for each (PhysicsObject2D* object in Players)
-		{
-			if(object->id == PlayerID)
-			{
-				object->AddImpulse(Vector2D(-1.0,0),10);
-			}
-		}	
-	}
-	if(keypress == SDL_SCANCODE_D)
-	{
-		for each (PhysicsObject2D* object in Players)
-		{
-			if(object->id == PlayerID)
-			{
-				object->AddImpulse(Vector2D(1.0,0),10);
-			}
-		}		
-	}
+		}
+	}	
 }

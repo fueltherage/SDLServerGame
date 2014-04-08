@@ -106,10 +106,10 @@ void Map::RegisterStaticObjectsOnGrid()
 }
 void Map::RegisterRectangleOnGrid(PhysicsObject2D* _object, bool staticObject)
 {
-	Vector2D c1World = _object->collider.c1World();
-	Vector2D c2World = _object->collider.c2World();
-	Vector2D c3World = _object->collider.c3World();
-	Vector2D c4World = _object->collider.c4World();
+	Vector2D c1World = _object->collider->c1World();
+	Vector2D c2World = _object->collider->c2World();
+	Vector2D c3World = _object->collider->c3World();
+	Vector2D c4World = _object->collider->c4World();
 
 	int c1GridPos = CalculateGridPos(&c1World);
 	int c2GridPos = CalculateGridPos(&c2World);
@@ -120,21 +120,10 @@ void Map::RegisterRectangleOnGrid(PhysicsObject2D* _object, bool staticObject)
 	bool c1c3 =  (c1GridPos == c3GridPos);
 	bool c1c4 =  (c1GridPos == c4GridPos);
 
-	
-	if(c1c2 && c1c3 && c1c3) 
+	if(_object->movable)
 	{
-		if(staticObject)
-		{
-			grid[clamp(c1GridPos,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos+height,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos-height,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos+1,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos-1,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos+height-1,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos+height+1,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos-height-1,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos-height+1,0,(width*height)-1)].AddStaticObject(_object);
-		}else {
+		if(c1c2 && c1c3 && c1c3) 
+		{			
 			grid[clamp(c1GridPos,0,(width*height)-1)].Add(_object);
 			grid[clamp(c1GridPos+height,0,(width*height)-1)].Add(_object);
 			grid[clamp(c1GridPos-height,0,(width*height)-1)].Add(_object);
@@ -144,43 +133,22 @@ void Map::RegisterRectangleOnGrid(PhysicsObject2D* _object, bool staticObject)
 			grid[clamp(c1GridPos+height+1,0,(width*height)-1)].Add(_object);
 			grid[clamp(c1GridPos-height-1,0,(width*height)-1)].Add(_object);
 			grid[clamp(c1GridPos-height+1,0,(width*height)-1)].Add(_object);
+			
 		}
-	}
-	if(!c1c2 && !c1c3 && !c1c3)
-	{
-		if(staticObject)
+		if(!c1c2 && !c1c3 && !c1c3)
 		{
-			grid[clamp(c1GridPos,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c2GridPos,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c3GridPos,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c4GridPos,0,(width*height)-1)].AddStaticObject(_object);
-		}else 
-		{
+			
+			
 			grid[clamp(c1GridPos,0,(width*height)-1)].Add(_object);
 			grid[clamp(c2GridPos,0,(width*height)-1)].Add(_object);
 			grid[clamp(c3GridPos,0,(width*height)-1)].Add(_object);
 			grid[clamp(c4GridPos,0,(width*height)-1)].Add(_object);
+			
 		}
-	}
-	if(c1c2 && !c1c4)
-	{
-		if(staticObject)
+		if(c1c2 && !c1c4)
 		{
-			grid[clamp(c1GridPos,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos+height,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos-height,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos-1,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos-1+height,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos-1-height,0,(width*height)-1)].AddStaticObject(_object);
-
-			grid[clamp(c3GridPos,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c3GridPos+height,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c3GridPos-height,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c3GridPos+1,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c3GridPos+1+height,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c3GridPos+1-height,0,(width*height)-1)].AddStaticObject(_object);	
-		}
-		else {
+			
+			
 			grid[clamp(c1GridPos,0,(width*height)-1)].Add(_object);
 			grid[clamp(c1GridPos+height,0,(width*height)-1)].Add(_object);
 			grid[clamp(c1GridPos-height,0,(width*height)-1)].Add(_object);
@@ -194,26 +162,11 @@ void Map::RegisterRectangleOnGrid(PhysicsObject2D* _object, bool staticObject)
 			grid[clamp(c3GridPos+1,0,(width*height)-1)].Add(_object);
 			grid[clamp(c3GridPos+1+height,0,(width*height)-1)].Add(_object);
 			grid[clamp(c3GridPos+1-height,0,(width*height)-1)].Add(_object);	
+			
 		}
-	}
-	if(c1c4 && !c1c2)
-	{
-		if(staticObject)
+		if(c1c4 && !c1c2)
 		{
-			grid[clamp(c1GridPos,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos+1,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos-1,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos-height,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos-height+1,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c1GridPos-height-1,0,(width*height)-1)].AddStaticObject(_object);
-
-			grid[clamp(c2GridPos,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c2GridPos+1,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c2GridPos-1,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c2GridPos+height,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c2GridPos+height+1,0,(width*height)-1)].AddStaticObject(_object);
-			grid[clamp(c2GridPos+height-1,0,(width*height)-1)].AddStaticObject(_object);
-		}else{
+			
 			grid[clamp(c1GridPos,0,(width*height)-1)].Add(_object);
 			grid[clamp(c1GridPos+1,0,(width*height)-1)].Add(_object);
 			grid[clamp(c1GridPos-1,0,(width*height)-1)].Add(_object);
@@ -227,15 +180,51 @@ void Map::RegisterRectangleOnGrid(PhysicsObject2D* _object, bool staticObject)
 			grid[clamp(c2GridPos+height,0,(width*height)-1)].Add(_object);
 			grid[clamp(c2GridPos+height+1,0,(width*height)-1)].Add(_object);
 			grid[clamp(c2GridPos+height-1,0,(width*height)-1)].Add(_object);
+			
+		}		
+	}
+	else
+	{
+		//Register the boundary rect
+		Vector2D _objectPos = _object->collider->center;
+		int p = CalculateGridPos(&_objectPos); //top left	
+		Vector2D _objectC2 = _object->collider->c2World();
+		int c2 = CalculateGridPos(&_objectC2);//bot right
+
+		int r1 = p - height -1;
+		r1 = clamp(r1,0,height*width);
+
+		int r2 = c2 + height +1;
+		r2 = clamp(r2,0,height*width);
+
+		int xstart;
+		int ystart;
+		int xmax;
+		int ymax;
+
+		for(int x = CalculateGridPosX(r1); x < CalculateGridPosX(r2); x++)
+		{
+			for(int y = CalculateGridPosY(r1); y < CalculateGridPosY(r2); y++)
+			{
+				grid[x*height+y].AddStaticObject(_object);
+			}
 		}
+
 	}
 }
-
 int Map::CalculateGridPos(Vector2D* _position)
 {	
 	int x = (int)(_position->x / cellSpacing);
 	int y = (int)(_position->y / cellSpacing);
 	return (x * height) + y;
+}
+int Map::CalculateGridPosY(int _position)
+{
+	return _position % height;
+}
+int Map::CalculateGridPosX(int _position)
+{
+	return _position / height;
 }
 void Map::Update(float gameTime)
 {

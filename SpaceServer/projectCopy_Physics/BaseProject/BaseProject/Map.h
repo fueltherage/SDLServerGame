@@ -17,7 +17,8 @@ public:
 	void Update(float gameTime);
 	void Draw(SpriteBatch* spriteBatch);
 	int CalculateGridPos(Vector2D* _position);
-	
+	int CalculateGridPosY(int _position);
+	int CalculateGridPosX(int _position);
 	//MapCell*[] GetGrid(); //I dont know if this would be used...
 private:
 	PhysicsEngine* engine;

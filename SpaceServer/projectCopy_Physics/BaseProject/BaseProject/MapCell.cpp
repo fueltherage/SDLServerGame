@@ -83,13 +83,14 @@ void MapCell::Update(float gameTime)
 		
 }
 void MapCell::Draw(SpriteBatch* spriteBatch){
-	if(Active())
-	{
-			int count = Count();
+	if(Active()){
+	
+		int count = Count();
 		//printf("\n red: %i, green: %i, blue: %i, alpha: %i",count*10,255-count*10,0,255);
 		spriteBatch->DrawTexture(Texture,CreateColor((int)clamp(count*35,0,255),(int)clamp(255-count*35,0,255),0,255),&cellSourceRect,&cellDestRect,0.0f,NULL,SDL_RendererFlip::SDL_FLIP_NONE,0.5f);
-	}else spriteBatch->DrawTexture(Texture,CreateColor(125,124,125,255),&cellSourceRect,&cellDestRect,0.0f,NULL,SDL_RendererFlip::SDL_FLIP_NONE,0.5f);
-	
+	}
+	else{spriteBatch->DrawTexture(Texture,CreateColor(125,124,125,255),&cellSourceRect,&cellDestRect,0.0f,NULL,SDL_RendererFlip::SDL_FLIP_NONE,0.5f);
+	}
 }
 
 //Clamps a value between and upper and lower range

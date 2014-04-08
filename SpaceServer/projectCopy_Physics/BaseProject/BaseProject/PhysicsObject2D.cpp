@@ -1,18 +1,19 @@
 #include "PhysicsObject2D.h"
 
+
 static Vector2D* mapBounds;
 void PhysicsObject2D::setMapBounds(Vector2D* bounds){mapBounds = bounds;}
 
 PhysicsObject2D::PhysicsObject2D(void)
 {
 }
-PhysicsObject2D::PhysicsObject2D(int _id, Vector2D _position, CollisionRect _collider)
+PhysicsObject2D::PhysicsObject2D(int _id, Vector2D _position, CollisionRect* _collider)
 {
-	id = _id;
+	id = _id;	
 	colliderType = Rectangle;
 	position = _position;
 	collider = _collider;
-	collider.center = _position;
+	collider->center = _position;
 	colliding = false;
 	resolveNumber =0;
 	resolvedVelocity = Vector2D(0.0,0.0);
@@ -33,6 +34,14 @@ PhysicsObject2D::~PhysicsObject2D(void)
 }
 void PhysicsObject2D::Update(float timeStep)
 {
+	//printf("\n.%s.",typeid(collider).name());
+	//std::string name = typeid(collider).name();
+
+	if(collider->name == 'B')
+	{
+	  int a =0;
+	}
+
 	rotVelocity += rotAcceleration * timeStep;
 	rotVelocity -= rotVelocity * drag;
 	rotation += rotVelocity * timeStep + 0.5f* rotAcceleration * timeStep * timeStep;
@@ -44,7 +53,6 @@ void PhysicsObject2D::Update(float timeStep)
 	resolveNumber = 0;
 	velocity += acceleration * timeStep;
 	velocity -= velocity.normalized() * drag;	
-
 	
 	position += velocity * timeStep + 0.5f * acceleration * timeStep * timeStep;
 
@@ -57,8 +65,8 @@ void PhysicsObject2D::Update(float timeStep)
 	rotAcceleration = 0;
 	acceleration = Vector2D(0.0,0.0);
 
-	collider.rotation = rotation;
-	collider.center = position;
+	collider->rotation = rotation;
+	collider->center = position;
 }
 void PhysicsObject2D::AddTorque(float _radius, float _torque)
 {
@@ -83,7 +91,7 @@ void PhysicsObject2D::SpringForce(Vector2D _position, float springAtRest, float 
 }
 void PhysicsObject2D::Draw(SpriteBatch* spriteBatch)
 {
-	collider.Draw(spriteBatch,id);
+	collider->Draw(spriteBatch,id);
 }
 
 

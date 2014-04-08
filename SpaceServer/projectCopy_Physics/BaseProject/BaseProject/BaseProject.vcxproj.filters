@@ -78,11 +78,20 @@
     <ClCompile Include="CollisionCircle.cpp">
       <Filter>Wes%27s Classes\wes Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TileMapCollisionScanner.cpp">
+      <Filter>Wes%27s Classes\wes Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundaryRect.cpp">
+      <Filter>Wes%27s Classes\wes Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="CollisionPolygon.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Wes%27s Classes\wes Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Wes%27s Classes\wes Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Wes%27s Classes\wes Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -143,11 +152,20 @@
     <ClInclude Include="CollisionCircle.h">
       <Filter>Wes%27s Classes\wes Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>Wes%27s Classes\wes Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="CollisionPolygon.h">
-      <Filter>Header Files</Filter>
+      <Filter>Wes%27s Classes\wes Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundaryRect.h">
+      <Filter>Wes%27s Classes\wes Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
+      <Filter>Wes%27s Classes\wes Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMapCollisionScanner.h">
+      <Filter>Wes%27s Classes\wes Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

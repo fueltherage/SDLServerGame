@@ -1,9 +1,4 @@
 #include "PhysicsEngine.h"
-
-
-
-
-
 static PhysicsEngine* instance;
 
 PhysicsEngine* PhysicsEngine::GetInstance()
@@ -13,14 +8,12 @@ PhysicsEngine* PhysicsEngine::GetInstance()
 	//otherwise return the instance.
 	return instance;
 }
-
 PhysicsEngine::PhysicsEngine(void)
 {
 }
 PhysicsEngine::~PhysicsEngine(void)
 {
 }
-
 //Registers objects by pairing them together to be checked for collision
 void PhysicsEngine::RegisterPairedCollision(PhysicsObject2D* _object1, PhysicsObject2D* _object2)
 {
@@ -43,89 +36,90 @@ void PhysicsEngine::Update(float gameTime)
 	for (unsigned int i=0; i<pairedCollisions.size(); i++)
 	{
 		CollisionInfo collisionInfo = DetectCollision(pairedCollisions[i]->object1,pairedCollisions[i]->object2);
-		if(collisionInfo.isColliding) {
-			//CollisionResponse(pairedCollisions[i]->object1,pairedCollisions[i]->object2, collisionInfo, -10.0f);
-			CollisionResponse2(pairedCollisions[i]->object1,pairedCollisions[i]->object2, collisionInfo);
+		if(collisionInfo.isColliding) {		
+			CollisionResponse(pairedCollisions[i]->object1,pairedCollisions[i]->object2, collisionInfo);
 		}
 	}
-
+	//pairedCollisionCount=0;
 	pairedCollisions.clear(); //Clear the collision registerer after collisions were checked
 }
+
 CollisionInfo PhysicsEngine::DetectCollision(PhysicsObject2D* _object1, PhysicsObject2D* _object2)
 {
 	//Check to see if both objects are Collider Type Rect
 	//if( dynamic_cast<CollisionRect>(_object1->collider ) != nullptr && dynamic_cast<CollisionRect>(_object1->collider ) != nullptr)
-	if(typeid(_object1->collider).name() == "struct CollisionRect*");
+
+	/*std::string name1 = typeid(&_object1->collider).name();
+	std::string name2 = typeid(&_object2->collider).name();*/
+
+	CollisionInfo collisionInfo = CollisionInfo();
+	collisionInfo.isColliding = false;
+	collisionInfo.overlap = Vector2D(0);
+
+	std::vector<Vector2D>Edges;
+	Edges.push_back(Vector2D(_object1->collider->c1World().x-_object1->collider->c2World().x,
+								_object1->collider->c1World().y-_object1->collider->c2World().y));
+	Edges.push_back(Vector2D(_object1->collider->c2World().x-_object1->collider->c3World().x,
+								_object1->collider->c2World().y-_object1->collider->c3World().y));
+	Edges.push_back(Vector2D(_object2->collider->c1World().x-_object2->collider->c2World().x,
+								_object2->collider->c1World().y-_object2->collider->c2World().y));
+	Edges.push_back(Vector2D(_object2->collider->c2World().x-_object2->collider->c3World().x,
+								_object2->collider->c2World().y-_object2->collider->c3World().y));
+
+	for (int i = 0; i < Edges.size(); i++)
 	{
-		CollisionInfo collisionInfo = CollisionInfo();
-		collisionInfo.isColliding = false;
-		collisionInfo.overlap = Vector2D(0);
+		Vector2D axis = Edges[i];
+		axis = axis.normalized();
+		axis.Perpendicular();
 
-		std::vector<Vector2D>Edges;
-		Edges.push_back(Vector2D(_object1->collider.c1World().x-_object1->collider.c2World().x,
-								 _object1->collider.c1World().y-_object1->collider.c2World().y));
-		Edges.push_back(Vector2D(_object1->collider.c2World().x-_object1->collider.c3World().x,
-								 _object1->collider.c2World().y-_object1->collider.c3World().y));
-		Edges.push_back(Vector2D(_object2->collider.c1World().x-_object2->collider.c2World().x,
-								 _object2->collider.c1World().y-_object2->collider.c2World().y));
-		Edges.push_back(Vector2D(_object2->collider.c2World().x-_object2->collider.c3World().x,
-								 _object2->collider.c2World().y-_object2->collider.c3World().y));
+		Vector2D _object1Max = Vector2D();
+		Vector2D _object1Min = Vector2D();
+		Vector2D _object2Max = Vector2D();
+		Vector2D _object2Min = Vector2D();
+		float _object1MaxDot;
+		float _object1MinDot;
+		float _object2MaxDot;
+		float _object2MinDot;
+		GetMinAndMax(_object1, _object1Min, _object1Max, _object1MinDot, _object1MaxDot, axis);
+		GetMinAndMax(_object2, _object2Min, _object2Max, _object2MinDot, _object2MaxDot, axis);
 
-		for (int i = 0; i < Edges.size(); i++)
-		{
-			Vector2D axis = Edges[i];
-			axis = axis.normalized();
-			axis.Perpendicular();
-
-			Vector2D _object1Max = Vector2D();
-			Vector2D _object1Min = Vector2D();
-			Vector2D _object2Max = Vector2D();
-			Vector2D _object2Min = Vector2D();
-			float _object1MaxDot;
-			float _object1MinDot;
-			float _object2MaxDot;
-			float _object2MinDot;
-			GetMinAndMax(_object1, _object1Min, _object1Max, _object1MinDot, _object1MaxDot, axis);
-			GetMinAndMax(_object2, _object2Min, _object2Max, _object2MinDot, _object2MaxDot, axis);
-
-			if(_object1MinDot>_object2MaxDot | _object1MaxDot<_object2MinDot) {
-				collisionInfo.isColliding = false;
-				return collisionInfo;
-			}else{
-				Vector2D overlap1 = axis * (_object1Min.DotProduct(axis) - _object2Max.DotProduct(axis));
-				Vector2D overlap2 = axis * (_object1Max.DotProduct(axis) - _object2Min.DotProduct(axis));
-				if(i==0 | overlap1.length()<collisionInfo.overlap.length() | overlap2.length()<collisionInfo.overlap.length()) {
-					if (overlap1.length() < overlap2.length()) {
-						collisionInfo.overlap = overlap1;
-						if (i<2) {
-							collisionInfo.collisionPoint = _object2Max;
-						} else {
-							collisionInfo.collisionPoint = _object1Min;
-						}
-						collisionInfo.collisionPoint -= collisionInfo.overlap;
+		if(_object1MinDot>_object2MaxDot | _object1MaxDot<_object2MinDot) {
+			collisionInfo.isColliding = false;
+			return collisionInfo;
+		}else{
+			Vector2D overlap1 = axis * (_object1Min.DotProduct(axis) - _object2Max.DotProduct(axis));
+			Vector2D overlap2 = axis * (_object1Max.DotProduct(axis) - _object2Min.DotProduct(axis));
+			if(i==0 | overlap1.length()<collisionInfo.overlap.length() | overlap2.length()<collisionInfo.overlap.length()) {
+				if (overlap1.length() < overlap2.length()) {
+					collisionInfo.overlap = overlap1;
+					if (i<2) {
+						collisionInfo.collisionPoint = _object2Max;
 					} else {
-						collisionInfo.overlap = overlap2;
-						if (i<2) {
-							collisionInfo.collisionPoint = _object2Min;
-						} else {
-							collisionInfo.collisionPoint = _object1Max;
-						}
+						collisionInfo.collisionPoint = _object1Min;
+					}
+					collisionInfo.collisionPoint -= collisionInfo.overlap;
+				} else {
+					collisionInfo.overlap = overlap2;
+					if (i<2) {
+						collisionInfo.collisionPoint = _object2Min;
+					} else {
+						collisionInfo.collisionPoint = _object1Max;
 					}
 				}
 			}
 		}
-
-		if(collisionInfo.overlap.length()>0.00001)
-			collisionInfo.isColliding=true;
-		return collisionInfo;
 	}
+
+	if(collisionInfo.overlap.length()>0.00001)
+		collisionInfo.isColliding=true;
+	return collisionInfo;	
 }
 void PhysicsEngine::GetMinAndMax(PhysicsObject2D* _object, Vector2D &_min, Vector2D &_max, float &_minDot, float &_maxDot, Vector2D _axis) {
 	std::vector<Vector2D> corners;
-	corners.push_back(_object->collider.c1World());
-	corners.push_back(_object->collider.c2World());
-	corners.push_back(_object->collider.c3World());
-	corners.push_back(_object->collider.c4World());
+	corners.push_back(_object->collider->c1World());
+	corners.push_back(_object->collider->c2World());
+	corners.push_back(_object->collider->c3World());
+	corners.push_back(_object->collider->c4World());
 
 	for (int i = 0; i < corners.size(); i++)
 	{
@@ -141,60 +135,7 @@ void PhysicsEngine::GetMinAndMax(PhysicsObject2D* _object, Vector2D &_min, Vecto
 	}
 }
 
-float PhysicsEngine::DotProduct(Vector2D *vec1, Vector2D *vec2)
-{
-	float dot = (vec1->x * vec2->x) + (vec1->y * vec2->y);
-	float mag = sqrtf((vec1->x * vec1->x) + (vec1->y * vec1->y) + 
-					  (vec2->x * vec2->x) + (vec2->y * vec2->y));
-
-
-	return acosf(dot / mag);
-	//return dot;
-}
-void PhysicsEngine::Normalize(Vector2D &vec)
-{
-	vec = vec / sqrtf((vec.x * vec.x) + (vec.y * vec.y));
-}
 void PhysicsEngine::CollisionResponse(PhysicsObject2D* _object1, PhysicsObject2D* _object2, CollisionInfo collisionInfo)
-{
-
-	Vector2D normal = _object1->position - _object2->position;
-	//Vector2D normal = collisionInfo.overlap;
-
-	Normalize(normal);
-
-	float ivObj1 = DotProduct(_object1->GetVelocity(), &normal);
-	float ivObj2 = DotProduct(_object1->GetVelocity(), &normal);
-	//NOTE: I'm fairly certain that scale is actually how elastic, or bouncy an object is.. I'll have to come back to this
-	float fvObj1 = (ivObj1 * (_object1->GetMass() - (_object1->GetCoefficient() * _object2->GetMass())) +
-				   (_object1->GetCoefficient()) * _object2->GetMass() * ivObj2) /
-				   (_object2->GetMass() + _object1->GetMass());
-	float fvObj2 = _object2->GetCoefficient() * (ivObj1 - ivObj2) + fvObj1;
-
-	float angleOfImpact = ((_object2->GetVelocity()->x * normal.x) +
-						   (_object2->GetVelocity()->y * normal.y)) /
-						   (_object2->GetVelocity()->length() * normal.length());
-	
-	
-	if(_object1->movable&&_object2->movable) {
-		_object1->velocity += ((fvObj1 - ivObj1) * normal);
-		_object1->position -= collisionInfo.overlap * 0.5f;
-		_object2->velocity -= ((fvObj2 - ivObj2) * normal); 
-		_object2->position += collisionInfo.overlap * 0.5f;
-	}
-	else if(_object2->movable && !_object1->movable) {
-		_object2->velocity += ((fvObj2 - ivObj2) * normal); 
-		_object2->position -= collisionInfo.overlap;
-	}
-	else if(_object1->movable && !_object2->movable) {
-		_object1->velocity += ((fvObj1 - ivObj1) * normal); 
-		_object1->position -= collisionInfo.overlap;
-	}
-	
-}
-
-
-void PhysicsEngine::CollisionResponse2(PhysicsObject2D* _object1, PhysicsObject2D* _object2, CollisionInfo collisionInfo)
 {
 	//Scotts formula for collision response.... Might only work on balls
 	/*
@@ -225,6 +166,7 @@ void PhysicsEngine::CollisionResponse2(PhysicsObject2D* _object1, PhysicsObject2
 		//printf("\n\n velocity before: x:%.2f y:%.2f", _object2->velocity.x,_object2->velocity.y);
 		
 		Vector2D normal = _object1->position - _object2->position;		
+		
 		if(abs(normal.x) > abs(normal.y))
 		{
 			normal.y=0;
@@ -244,7 +186,8 @@ void PhysicsEngine::CollisionResponse2(PhysicsObject2D* _object1, PhysicsObject2
 		_object2->resolveNumber++;
 		//_object2->velocity = normal * normalVel + boundary * boundVel;
 		//printf("\nvelocity after: x:%.2f y:%.2f", _object1->velocity.x,_object1->velocity.y);
-		_object2->position -= Dot(&normal,&collisionInfo.overlap)*collisionInfo.overlap/collisionInfo.overlap.length();
+		_object2->position -= Dot(&normal,&collisionInfo.overlap)*(collisionInfo.overlap/collisionInfo.overlap.length());
+
 		
 	}
 	else if(_object1->movable && !_object2->movable) {	
@@ -273,4 +216,5 @@ void PhysicsEngine::CollisionResponse2(PhysicsObject2D* _object1, PhysicsObject2
 		//printf("\nvelocity after: x:%.2f y:%.2f", _object1->velocity.x,_object1->velocity.y);
 		_object1->position -= Dot(&normal,&collisionInfo.overlap)*collisionInfo.overlap/collisionInfo.overlap.length();
 	}
+
 }

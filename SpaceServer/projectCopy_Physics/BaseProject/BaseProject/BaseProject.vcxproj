@@ -70,6 +70,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BoundaryRect.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="CollisionCircle.cpp" />
     <ClCompile Include="CollisionObject.cpp" />
     <ClCompile Include="CollisionPair.cpp" />
@@ -89,8 +91,11 @@
     <ClCompile Include="SpriteBatch.cpp" />
     <ClCompile Include="SpriteFont.cpp" />
     <ClCompile Include="TileEngine.cpp" />
+    <ClCompile Include="TileMapCollisionScanner.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoundaryRect.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="CollisionCircle.h" />
     <ClInclude Include="CollisionObject.h" />
     <ClInclude Include="CollisionPair.h" />
@@ -111,6 +116,7 @@
     <ClInclude Include="SpriteBatch.h" />
     <ClInclude Include="SpriteFont.h" />
     <ClInclude Include="TileEngine.h" />
+    <ClInclude Include="TileMapCollisionScanner.h" />
     <ClInclude Include="Vector2D.h" />
   </ItemGroup>
   <ItemGroup>

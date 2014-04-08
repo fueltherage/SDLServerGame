@@ -1,19 +1,21 @@
 #pragma once
 
-#include "CollisionRect.h"
+#include "BoundaryRect.h"
 #include "SpriteBatch.h"
+#include <typeinfo>
 class PhysicsObject2D
 {
 public:	
 	enum ColliderType{Rectangle, Circle, Triangle};
-	PhysicsObject2D(int _id, Vector2D _position, CollisionRect collider);	
+	PhysicsObject2D(int _id, Vector2D _position, CollisionRect* collider);		
 	PhysicsObject2D(void);
 	~PhysicsObject2D(void);
 
 	bool DebugMode;
 
 	ColliderType colliderType;
-	CollisionRect collider;
+	CollisionRect* collider;
+	
 	bool movable;
 
 	bool colliding;
@@ -94,6 +96,11 @@ public:
 	Vector2D velocity;
 	float rotation;
 	Vector2D position;
+
+	void PrintStuff()
+	{
+		//printf("position: x:%.2f y:%.2f velocity: x:%.2f y:%.2f acceleration: x:%.2f y:%.2f colliderType: %s",position.x,position.y, velocity.x, velocity.y, acceleration.x, acceleration.y, collider.name);
+	};
 	
 protected:
 	int id;
