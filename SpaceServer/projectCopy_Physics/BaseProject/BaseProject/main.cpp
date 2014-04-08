@@ -70,7 +70,7 @@ int main(int argv, char** argc)
 	Player* Player1; 
 	Player* Player2;
 
-	BlazedFont = font->LoadFont("Blazed.ttf", 16);
+	BlazedFont = font->LoadFont("Blazed.ttf", 24);
 	floortile = spriteBatch->LoadTexture(std::string("Assets//Tilesheets//") + tileEngine->getTileSheet() + std::string("//FloorTile.png"));
 	background = spriteBatch->LoadTexture(std::string("Assets//Tilesheets//") + tileEngine->getTileSheet() + std::string("//Background.jpg"));
 	explosion = spriteBatch->LoadTexture("Assets//Explosion1.png");
@@ -86,6 +86,7 @@ int main(int argv, char** argc)
 		Bounds[Bounds.size()-1]->movable = false;
 		gameMap->RegisterStaticObject(Bounds[Bounds.size()-1]);
 	}
+	//gameMap->RegisterStaticObject(Bounds[9]);
 	
 	
 	//for(int y =0; y<tileEngine->getGridHeight();y++)
@@ -110,12 +111,12 @@ int main(int argv, char** argc)
 		gameMap->RegisterStaticObject(Bounds[j]);
 	}*/
 	
-	for(int i=0; i<5; i++)
+	for(int i=0; i<10; i++)
 	{
 		things.push_back(new PhysicsObject2D(GetNewId(),Vector2D(100*i,500), new CollisionRect(Vector2D(0.0,0.0),25,25)));
 		things[things.size()-1]->movable = true;
-		things[things.size()-1]->SetDrag(0.5);
-		things[things.size()-1]->SetCoefficient(0.5);
+		things[things.size()-1]->SetDrag(0);
+		things[things.size()-1]->SetCoefficient(1);
 		gameMap->RegisterObject(things[things.size()-1]);
 
 	}

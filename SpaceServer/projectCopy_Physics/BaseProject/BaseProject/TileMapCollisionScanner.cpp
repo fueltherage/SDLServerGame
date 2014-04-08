@@ -88,7 +88,7 @@ TileMapCollisionScanner::TileMapCollisionScanner(TileEngine* tiles)
 		{		
 			
 			currentTile = leftOverTiles[x+y*GridWidth];			
-			nextTile = leftOverTiles[x+(y+1)*GridHeight];
+			nextTile = leftOverTiles[x+(y+1)*GridWidth];
 			if(y<GridHeight-1)
 			{	
 				if(currentTile ==1 && nextTile ==1)
@@ -130,7 +130,7 @@ TileMapCollisionScanner::TileMapCollisionScanner(TileEngine* tiles)
 		if(leftOverTiles[i] == 1)
 		{
 			Vector2D rectPosition = Vector2D((i%GridWidth)*tileWidth, (i/GridHeight)*tileHeight);
-			rects.push_back(new CollisionRect(Vector2D(rectPosition.x + tileWidth/2, rectPosition.y + tileHeight/2), tileWidth, tileHeight)); 
+			rects.push_back(new CollisionRect(Vector2D(rectPosition.x + tileWidth/2.0f, rectPosition.y + tileHeight/2), tileWidth, tileHeight)); 
 		}
 	}
 }
