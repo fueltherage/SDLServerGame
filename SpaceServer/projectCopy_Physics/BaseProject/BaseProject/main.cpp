@@ -111,12 +111,12 @@ int main(int argv, char** argc)
 		gameMap->RegisterStaticObject(Bounds[j]);
 	}*/
 	
-	for(int i=0; i<10; i++)
+	for(int i=0; i<5; i++)
 	{
-		things.push_back(new PhysicsObject2D(GetNewId(),Vector2D(100*i,500), new CollisionRect(Vector2D(0.0,0.0),25,25)));
+		things.push_back(new PhysicsObject2D(GetNewId(),Vector2D(100*i,500), new CollisionRect(Vector2D(0.0,0.0),10,10)));
 		things[things.size()-1]->movable = true;
 		things[things.size()-1]->SetDrag(0);
-		things[things.size()-1]->SetCoefficient(1);
+		things[things.size()-1]->SetCoefficient(0.4);
 		gameMap->RegisterObject(things[things.size()-1]);
 
 	}
